@@ -1,0 +1,150 @@
+<script src="node_modules/react/umd/react.development.js"></script>
+<script src="node_modules/react-dom/umd/react-dom.development.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+
+<div id="app">
+    <div id="game-frame"></div>
+</div>
+
+<script type="text/babel">
+
+    class Game extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = {
+                game: [0,0,0,0,0,0,0,0,0],
+                player1: true,
+                player2: false,
+                changeTurn: function() {
+                    if(this.player1) {
+                        this.player1 = false;
+                        this.player2 = true;
+                    } else {
+                        this.player2 = false;
+                        this.player1 = true;
+                    }
+                    ReactDOM.render(myApp.render(), document.getElementById('app'));
+                    this.checkStatus();
+                },
+                getCurrPlayer: function() {
+                    if(this.player1) {
+                        return 'p1';
+                    } else {
+                        return 'p2';
+                    }
+                },
+                setCell: function(idx, val) {
+                    this.game[idx] = val;
+                    this.changeTurn()
+                },
+                checkStatus: function() {
+                    function declareWinner(cell) {
+                        if(cell == 1) {
+                            alert('player one WINS.')
+                            alert('player two Sucks!')
+                        } else {
+                            alert('player two WINS.')
+                            alert('player one Sucks!')
+                        }
+                    }
+                    if(this.game[0] != 0 && this.game[0] == this.game[1] && this.game[1] == this.game[2]) {
+                        console.log('scenario 1')
+                        declareWinner(this.game[0]);
+                    }
+                    if(this.game[3] != 0 && this.game[3] == this.game[4] && this.game[3] == this.game[5]) {
+                        console.log('scenario 2')
+                        declareWinner(this.game[3]);
+                    }
+                    if(this.game[6] != 0 && this.game[6] == this.game[7] && this.game[7] == this.game[8]) {
+                        console.log('scenario 3')
+                        declareWinner(this.game[6]);
+                    }
+                    if(this.game[0] != 0 && this.game[0] == this.game[3] && this.game[0] == this.game[6]) {
+                        console.log('scenario 4')
+                        declareWinner(this.game[0]);
+                    }
+                    if(this.game[1] != 0 && this.game[1] == this.game[4] && this.game[1] == this.game[7]) {
+                        console.log('scenario 5')
+                        declareWinner(this.game[1]);
+                    }
+                    if(this.game[2] != 0 && this.game[2] == this.game[5] && this.game[2] == this.game[8]) {
+                        console.log('scenario 6')
+                        declareWinner(this.game[2]);
+                    }
+                    if(this.game[0] != 0 && this.game[0] == this.game[4] && this.game[0] == this.game[8]) {
+                        console.log('scenario 7')
+                        declareWinner(this.game[0]);
+                    }
+                    if(this.game[2] != 0 && this.game[2] == this.game[4] && this.game[2] == this.game[6]) {
+                        console.log('scenario 8')
+                        declareWinner(this.game[2]);
+                    }
+                }
+            }
+        }
+
+        render(){
+            return (
+                <div id='game'>
+                    <h1>Current Player: {this.state.player1 ? 'Player One(X\'s)' : 'Player Two(O\'s)'}</h1>
+                    {this.state.game.map((currCellVal, idx) => {
+                        this.state.idx = idx;
+                        this.state.cell = currCellVal;
+                        return new Cell(this.state).render()
+                    })}
+                </div>
+            )
+        }
+    }
+
+    class Cell extends React.Component {
+        constructor(props){
+            super(props);
+            this.state = {
+                cell: props.cell,
+                id: props.idx,
+                icon: this.getIcon(props.cell),
+            }
+        }
+
+        getIcon(cellVal) {
+            if(cellVal == 0) {
+                return ' '
+            } else if (cellVal == 1) {
+                return 'X'
+            } else if (cellVal == 2) {
+                return 'O'
+            }
+        }
+
+        select() {
+            if(this.state.cell != 0) {
+                alert('This square is already taken')
+            } else {
+                if(this.props.getCurrPlayer() == 'p1') {
+                    this.props.setCell(this.state.id, 1);
+                } else {
+                    this.props.setCell(this.state.id, 2);
+                }
+            }
+        }
+
+        render(){
+            return (
+                <div onClick={() => this.select()} className='cell'>
+                    <h1>{this.state.icon}</h1>
+                </div>
+            )
+        }
+    }
+
+
+    const myApp = new Game();
+
+
+    ReactDOM.render(myApp.render(), document.getElementById('app'));
+
+
+</script>
